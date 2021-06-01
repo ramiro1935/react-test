@@ -1,58 +1,48 @@
-import React, { useState} from 'react';
-
-const Button = ({handleClick, text}) => {
-	return <button onClick={handleClick}>{text}</button>;
-};
-const Statistic = ({text, value}) => {
-	return (
-		<tr>
-			<td>{text}</td>
-			<td>{value}</td>
-		</tr>
-	);
-};
-
-const Statistics = ({good, neutral, bad}) => {
-	const total = good + neutral + bad;
-	const average = (good + -1 * bad) / total;
-	const positive = (good * 100) / total;
-	if (good || neutral || bad) {
-		return (
-			<>
-				<h1>statistics</h1>
-				<table>
-					<tbody>
-						<Statistic text='good' value={good} />
-						<Statistic text='neutral' value={neutral} />
-						<Statistic text='bad' value={bad} />
-						<Statistic text='all' value={total} />
-						<Statistic text='average' value={average} />
-						<Statistic text='positive' value={`${positive} %`} />
-					</tbody>
-				</table>
-			</>
-		);
-	}
-
-	return <p>No feedback given</p>;
-};
+import React, {useState} from 'react';
 
 const App = () => {
-	const [good, setGood] = useState(0);
-	const [neutral, setNeutral] = useState(0);
-	const [bad, setBad] = useState(0);
+	const data = [
+		{ text: 'If it hurts, do it more often', votes: 0},
+		{ text: 'Adding manpower to a late software project makes it later!', votes: 0},
+		{ text: 'The first 90 percent of the code accounts for the first 90 percent of the development time...The remaining 10 percent of the code accounts for the other 90 percent of the development time.', votes: 0},
+		{ text: 'Any fool can write code that a computer can understand. Good programmers write code that humans can understand.', votes: 0},
+		{ text: 'Premature optimization is the root of all evil.', votes: 0},
+		{ text: 'Debugging is twice as hard as writing the code in the first place. Therefore, if you write the code as cleverly as possible, you are, by definition, not smart enough to debug it.', votes: 0},
+		{ text: 'Programming without an extremely heavy use of console.log is same as if a doctor would refuse to use x-rays or blod tests when dianosing patients', votes: 0},
+	];
 
-	const handleGood = () => setGood(good + 1);
-	const handleNeutral = () => setNeutral(neutral + 1);
-	const handleBad = () => setBad(bad + 1);
+  const [selected, setSelected] = useState(0);
+  const [anecdotes, setAnecdotes] = useState(data)
+	
 
+	const handleRandomNumber = () => {
+		const random = Math.floor(Math.random() * anecdotes.length) ;
+    setSelected(random);
+    console.log({random});
+  };
+  
+
+	const handleVote = () => {
+		const newVotes = [...anecdotes];
+    newVotes[selected] = { ...newVotes[selected], votes: newVotes[selected].votes + 1};
+    setAnecdotes(newVotes)
+  };
+  
+
+  const qvotes = anecdotes[selected].votes;
+  const mostVoted = [...anecdotes].sort((a,b) => b.votes - a.votes)[0]
+  
 	return (
 		<div>
-			<h1>give feedback</h1>
-			<Button handleClick={handleGood} text={'good'} />
-			<Button handleClick={handleNeutral} text={'neutral'} />
-			<Button handleClick={handleBad} text={'bad'} />
-			<Statistics good={good} bad={bad} neutral={neutral} />
+			<h1>Anecdote of the day</h1>
+			{anecdotes[selected].text}
+			<p>has {qvotes} votes</p>
+			<button onClick={handleVote}>vote</button>
+			<button onClick={handleRandomNumber}>next anecdote</button>
+
+      <h1>Anecdote with most votes</h1>
+      {mostVoted.text}
+      <p>has {mostVoted.votes}</p>
 		</div>
 	);
 };
